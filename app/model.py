@@ -1,4 +1,4 @@
-import pickle
+import joblib
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -27,5 +27,5 @@ class Model:
 
 if __name__ == "__main__":
     model = Model(pd.read_csv('../Data/Data.csv'))
-    pickle.dump(model, open('model.pkl', 'wb'))
+    joblib.dump(model, "model.joblib")
 

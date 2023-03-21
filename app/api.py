@@ -1,8 +1,11 @@
-import pickle
+import joblib
 import uvicorn
+import __main__
 from fastapi import FastAPI, Response
 from model import Model
 
+setattr(__main__, "Model", Model)
+model = joblib.load("model.joblib")
 app = FastAPI()
 
 
@@ -21,5 +24,4 @@ def get_recommendations(game_id: int):
 
 
 if __name__ == "__main__":
-    model = pickle.load(open('model.pkl', 'rb'))
     uvicorn.run(app, host='127.0.0.1', port=8080)
