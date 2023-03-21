@@ -8,6 +8,6 @@ COPY . /app
 
 WORKDIR /app
 
-EXPOSE 80
+EXPOSE 3000
 
-CMD ["uvicorn", "api:app", "--reload", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "api:app", "--reload", "--host", "0.0.0.0", "--port", "3000"]
