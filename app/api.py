@@ -18,7 +18,7 @@ def get_home():
 def get_recommendations(game_id: int):
     recommendations = model.predict(game_id)
     d = {
-        "item": str(recommendations[0]),
+        "items": recommendations,
     }
     return Response(content=str(d).replace("\'", "\""), media_type="application/json")
 
