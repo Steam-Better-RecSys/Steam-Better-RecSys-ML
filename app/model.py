@@ -73,5 +73,5 @@ class Model:
 
 if __name__ == "__main__":
     model = Model(pd.read_csv('../Data/Data.csv'))
-    joblib.dump(model, "model.joblib")
+    joblib.dump(model, "model.joblib", compress=3)
 
