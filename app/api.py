@@ -20,7 +20,7 @@ def get_recommendations(request: Request, response: Response, game_id: int, like
     predicted_vector = request.cookies.get("vector")
     predictions = model.predict(predicted_vector, game_id, liked, top, offset)
     response.set_cookie(key="vector", value=predictions["vector"])
-    return predictions["recs"]
+    return {"items": predictions["recs"]}
 
 
 @app.post("/selected_games")

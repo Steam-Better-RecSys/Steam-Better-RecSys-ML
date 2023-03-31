@@ -49,7 +49,10 @@ class Model:
         return self.__get_clear_dataframe(selected_df)
 
     def predict(self, predicted_vector, game_id: int = 0, liked: int = 1, top: int = 10, offset: int = 0, iteration: int = 1):
-        predicted_vector = np.array(literal_eval(predicted_vector))
+        if predicted_vector is not None:
+            predicted_vector = np.array(literal_eval(predicted_vector))
+        else:
+            predicted_vector = np.zeros((1, len(self.tags)), dtype=float)
         predicted_dataframe = pd.DataFrame(predicted_vector, columns=self.tags)
         predicted_values = self.__keep_important_features(predicted_dataframe, 30).values
 
