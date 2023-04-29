@@ -1,6 +1,4 @@
 import joblib
-import uvicorn
-import requests
 import __main__
 import numpy as np
 from fastapi import FastAPI, Request
@@ -47,16 +45,3 @@ async def set_selected_games(request: Request):
     )
     content = {"vector": vector}
     return JSONResponse(content=jsonable_encoder(content))
-
-
-@app.get('/test')
-async def test():
-    res = requests.get('https://store.steampowered.com/api/appdetails?appids=730&l=english')
-    description = res.json()['730']['data']['detailed_description']
-    content = {"description": description}
-    return JSONResponse(content=jsonable_encoder(content))
-
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8080)

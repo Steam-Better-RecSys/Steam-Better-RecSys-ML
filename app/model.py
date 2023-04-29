@@ -60,7 +60,7 @@ class Model:
         iteration: int = 1,
     ):
         """Function to predict next results based on a predicted vector and a current game status:
-        liked/disliked/ignored """
+        liked/disliked/ignored"""
         predicted_vector = np.array(literal_eval(predicted_vector))
         predicted_dataframe = pd.DataFrame(predicted_vector, columns=self.tags)
         predicted_values = self.__keep_important_features(
