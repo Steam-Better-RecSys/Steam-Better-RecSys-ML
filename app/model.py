@@ -1,7 +1,6 @@
 import joblib
 import pandas as pd
 import numpy as np
-from ast import literal_eval
 from sklearn.metrics.pairwise import cosine_distances
 
 
@@ -31,9 +30,15 @@ class Model:
     def __get_clear_dataframe(self, df: pd.DataFrame):
         """Function to keep weights of tags below 2"""
         for tag in self.tags:
-            if df[tag].item() > 2:
-                df[tag] = 2
+            if df[tag].item() > 1:
+                df[tag] = 1
         return df
+
+    def reduce_vector(self, vector: list):
+        """Function for replacing a fractional vector with an integer one to reduce cookie size"""
+        values = [i * 100 for i in vector]
+        values = np.array(values, dtype="int16")
+        return " ".join(map(str, values))
 
     def set_initial_vector(self, game_ids: list):
         """Function to set initial prediction vector with values from selected games"""
@@ -46,8 +51,10 @@ class Model:
                 self.df.loc[[int(game_id)]], max_features_per_game
             ).values
 
-        return self.__get_clear_dataframe(
-            self.__keep_important_features(selected_df, max_features_total)
+        return self.reduce_vector(
+            self.__get_clear_dataframe(
+                self.__keep_important_features(selected_df, max_features_total)
+            ).values[0]
         )
 
     def predict(
@@ -61,7 +68,9 @@ class Model:
     ):
         """Function to predict next results based on a predicted vector and a current game status:
         liked/disliked/ignored"""
-        predicted_vector = np.array(literal_eval(predicted_vector))
+        predicted_vector = np.fromstring(predicted_vector, dtype=float, sep=" ")
+        predicted_vector /= 100
+        predicted_vector = [predicted_vector]
         predicted_dataframe = pd.DataFrame(predicted_vector, columns=self.tags)
         predicted_values = self.__keep_important_features(
             predicted_dataframe, 15
@@ -82,9 +91,7 @@ class Model:
         results_df = results_df.sort_values(by=["distance"], ascending=True)
 
         return {
-            "vector": np.array2string(
-                predicted_values, precision=2, separator=",", suppress_small=True
-            ),
+            "vector": self.reduce_vector(predicted_values[0]),
             "games": results_df.head(offset + top).tail(top).index.to_list(),
         }
 

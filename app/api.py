@@ -1,6 +1,5 @@
 import joblib
 import __main__
-import numpy as np
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -40,8 +39,5 @@ async def set_selected_games(request: Request):
     request = await request.json()
     games_ids = request["games_ids"].split(",")
     vector = model.set_initial_vector(games_ids)
-    vector = np.array2string(
-        vector.values, precision=2, separator=",", suppress_small=True
-    )
     content = {"vector": vector}
     return JSONResponse(content=jsonable_encoder(content))
