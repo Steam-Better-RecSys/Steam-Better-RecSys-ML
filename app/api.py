@@ -37,7 +37,7 @@ async def get_recommendations(
 async def set_selected_games(request: Request):
     """Set selected games"""
     request = await request.json()
-    games_ids = request["games_ids"].split(",")
+    games_ids = request["games_ids"]
     vector = model.set_initial_vector(games_ids)
     content = {"vector": vector}
     return JSONResponse(content=jsonable_encoder(content))
