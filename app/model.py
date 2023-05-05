@@ -68,7 +68,10 @@ class Model:
     ):
         """Function to predict next results based on a predicted vector and a current game status:
         liked/disliked/ignored"""
-        predicted_vector = np.fromstring(predicted_vector, dtype=float, sep=" ")
+        if predicted_vector is None:
+            predicted_vector = np.zeros((1, len(self.tags)), dtype=float)
+        else:
+            predicted_vector = np.fromstring(predicted_vector, dtype=float, sep=" ")
         predicted_vector /= 100
         predicted_vector = [predicted_vector]
         predicted_dataframe = pd.DataFrame(predicted_vector, columns=self.tags)
