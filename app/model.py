@@ -25,7 +25,20 @@ class Model:
             if tag in features and num_cur_features > num_max_features:
                 df[tag] = 0
                 num_cur_features -= 1
+            elif num_cur_features == 0:
+                break
         return df
+
+    def __get_most_important_features(self, df: pd.DataFrame, top_features: int = 1):
+        """Function to get names of most important features from the vector"""
+        features = df.loc[:, df.columns[df.max(axis=0) > 0]].columns
+        top_tags = []
+        for tag in reversed(self.tag_importance):
+            if tag in features and len(top_tags) < top_features:
+                top_tags.append(tag)
+            elif len(top_tags) == top_features:
+                break
+        return top_tags
 
     def __get_clear_dataframe(self, df: pd.DataFrame):
         """Function to keep weights of tags below 2"""
@@ -64,7 +77,6 @@ class Model:
         game_status: int = 1,
         top: int = 10,
         offset: int = 0,
-        iteration: int = 1,
     ):
         """Function to predict next results based on a predicted vector and a current game status:
         liked/disliked/ignored"""
@@ -75,22 +87,26 @@ class Model:
         predicted_vector /= 100
         predicted_vector = [predicted_vector]
         predicted_dataframe = pd.DataFrame(predicted_vector, columns=self.tags)
-        predicted_values = self.__keep_important_features(
-            predicted_dataframe, 15
-        ).values
 
         game_values = pd.DataFrame(0, columns=self.tags, index=[""]).values
         if game_id != 0 and game_status != 0:
             game_df = self.df.loc[[game_id]]
-            features = min(5 + (iteration - 1), 10)
+            features = 5
             game_values = (
                 self.__keep_important_features(game_df, features).values * game_status
             )
 
-        predicted_values += game_values
+        predicted_dataframe += game_values
+
+        predicted_dataframe = self.__keep_important_features(predicted_dataframe, 20)
+
+        predicted_values = predicted_dataframe.values
+
+        most_important_tag = self.__get_most_important_features(predicted_dataframe)[0]
 
         results_df = self.df.copy()
-        results_df["distance"] = cosine_distances(self.df.values, predicted_values)
+        results_df = results_df[results_df[most_important_tag] > 0]
+        results_df["distance"] = cosine_distances(results_df.values, predicted_values)
         results_df = results_df.sort_values(by=["distance"], ascending=True)
 
         return {
