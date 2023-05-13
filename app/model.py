@@ -55,8 +55,8 @@ class Model:
 
     def set_initial_vector(self, game_ids: list):
         """Function to set initial prediction vector with values from selected games"""
-        max_features_total = 20
-        max_features_per_game = 5
+        max_features_total = 15
+        max_features_per_game = max(15 // len(game_ids), 1)
         selected_df = pd.DataFrame(0, columns=self.tags, index=[""])
 
         for game_id in game_ids:
@@ -96,9 +96,9 @@ class Model:
                 self.__keep_important_features(game_df, features).values * game_status
             )
 
-        predicted_dataframe += game_values
+        predicted_dataframe = (predicted_dataframe + game_values) / 2
 
-        predicted_dataframe = self.__keep_important_features(predicted_dataframe, 20)
+        predicted_dataframe = self.__keep_important_features(predicted_dataframe, 15)
 
         predicted_values = predicted_dataframe.values
 
