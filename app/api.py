@@ -40,3 +40,12 @@ async def set_selected_games(request: Request, games_ids: List[int] = Query(None
     vector = model.set_initial_vector(games_ids)
     content = {"vector": vector}
     return JSONResponse(content=jsonable_encoder(content))
+
+
+@app.get("/reviews/{game_id}")
+async def get_reviews(game_id):
+    return {
+        "pros": ["art", "music", "gameplay"],
+        "cons": ["bugs", "controls"],
+        "id": game_id,
+    }
