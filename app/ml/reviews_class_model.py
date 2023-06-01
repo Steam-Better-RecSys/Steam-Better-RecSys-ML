@@ -35,19 +35,3 @@ class ReviewsClassModel(TextClassifier):
 
         model.save(self.model_path)
 
-
-if __name__ == "__main__":
-    current_file = os.path.abspath(os.path.dirname(__file__))
-    print(current_file)
-    csv_filename = os.path.join(current_file, "../../Data/labeled_steam_reviews.csv")
-    model_path = os.path.join(current_file, "keras_models/reviews_class_model")
-    joblib_path = os.path.join(
-        current_file, "joblib_classes/reviews_class_model.joblib"
-    )
-
-    data = pd.read_csv(csv_filename)
-    model = ReviewsClassModel(model_path)
-    model.create_model(data)
-    joblib.dump(model, joblib_path, compress=3)
-
-    print("Model's dump is ready")
