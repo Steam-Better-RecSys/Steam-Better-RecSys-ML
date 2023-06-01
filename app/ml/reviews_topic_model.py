@@ -2,7 +2,7 @@ import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
 
-from .text_classifier_model import TextClassifier
+from text_classifier_model import TextClassifier
 
 
 class ReviewsTopicModel(TextClassifier):
