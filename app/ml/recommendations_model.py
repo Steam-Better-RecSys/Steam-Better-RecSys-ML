@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_distances
 
 
-class Model:
+class RecommendationModel:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.tags = self.df.columns
@@ -117,7 +117,7 @@ class Model:
 
 if __name__ == "__main__":
     data = pd.read_csv("../Data/steam_wizzard_tags_data.csv", index_col=0)
-    model = Model(data)
-    joblib.dump(model, "model.joblib", compress=3)
+    model = RecommendationModel(data)
+    joblib.dump(model, "ml/joblib_classes/recommendations_model.joblib", compress=3)
 
     print("Model's dump is ready")
