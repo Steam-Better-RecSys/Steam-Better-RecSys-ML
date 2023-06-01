@@ -6,3 +6,4 @@ fastapi~=0.95.0
 joblib~=1.2.0
 keras~=2.13.1rc0
 nltk~=3.8.1
+tensorflow==1.2.0
