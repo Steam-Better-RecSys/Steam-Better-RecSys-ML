@@ -1,16 +1,15 @@
 import joblib
 import __main__
 
-import uvicorn
 from fastapi import FastAPI, Request, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from typing import List
 
-from app.ml.reviews_class_model import ReviewsClassModel
-from app.steam_controller import SteamController
-from app.ml.recommendations_model import RecommendationModel
-from app.ml.reviews_topic_model import ReviewsTopicModel
+from ml.reviews_class_model import ReviewsClassModel
+from steam_controller import SteamController
+from ml.recommendations_model import RecommendationModel
+from ml.reviews_topic_model import ReviewsTopicModel
 
 setattr(__main__, "RecommendationModel", RecommendationModel)
 setattr(__main__, "ReviewsClassModel", ReviewsClassModel)
