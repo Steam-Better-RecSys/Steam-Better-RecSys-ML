@@ -1,22 +1,28 @@
 import joblib
 import __main__
 
+import uvicorn
 from fastapi import FastAPI, Request, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from typing import List
 
+from ml.reviews_topic_model import ReviewsTopicModel
 from ml.reviews_class_model import ReviewsClassModel
 from steam_controller import SteamController
 from ml.recommendations_model import RecommendationModel
-from ml.reviews_topic_model import ReviewsTopicModel
 
-setattr(__main__, "RecommendationModel", RecommendationModel)
 setattr(__main__, "ReviewsClassModel", ReviewsClassModel)
+setattr(__main__, "RecommendationModel", RecommendationModel)
 setattr(__main__, "ReviewsTopicModel", ReviewsTopicModel)
-recommendations_model = joblib.load("ml/joblib_classes/recommendations_model.joblib")
-reviews_class_model = joblib.load("ml/joblib_classes/reviews_class_model.joblib")
-reviews_topic_model = joblib.load("ml/joblib_classes/reviews_topic_model.joblib")
+
+import os.path
+b = os.path.exists('/Users/evlko/Documents/GitHub/Steam-Better-RecSys/Steam-Better-RecSys-ML/app/api/ml/joblib_classes/reviews_class_model.joblib')
+print(b)
+
+recommendations_model = joblib.load("/Users/evlko/Documents/GitHub/Steam-Better-RecSys/Steam-Better-RecSys-ML/app/api/ml/joblib_classes/recommendations_model.joblib")
+#a = joblib.load('/Users/evlko/Documents/GitHub/Steam-Better-RecSys/Steam-Better-RecSys-ML/app/ml/joblib_classes/reviews_class_model.joblib')
+reviews_class_model = joblib.load('/Users/evlko/Documents/GitHub/Steam-Better-RecSys/Steam-Better-RecSys-ML/app/api/ml/joblib_classes/reviews_class_model.joblib')
 steam_controller = SteamController()
 app = FastAPI()
 
@@ -82,3 +88,6 @@ async def get_reviews(game_id):
         game_id,
     )
     return results
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8080)

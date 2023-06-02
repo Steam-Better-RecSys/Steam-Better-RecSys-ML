@@ -5,7 +5,8 @@ import keras
 from keras.utils import pad_sequences
 from nltk import word_tokenize
 from sklearn.model_selection import train_test_split
-from utils.text_preprocesser import TextPreprocessor
+
+from .text_preprocesser import TextPreprocessor
 import os
 
 nltk.download("wordnet", quiet=True)

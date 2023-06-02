@@ -116,8 +116,8 @@ class RecommendationModel:
 
 
 if __name__ == "__main__":
-    data = pd.read_csv("../Data/steam_wizzard_tags_data.csv", index_col=0)
+    data = pd.read_csv("../../../Data/steam_wizzard_tags_data.csv", index_col=0)
     model = RecommendationModel(data)
-    joblib.dump(model, "ml/joblib_classes/recommendations_model.joblib", compress=3)
+    joblib.dump(model, "joblib_classes/recommendations_model.joblib", compress=3)
 
     print("Model's dump is ready")
