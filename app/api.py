@@ -1,14 +1,24 @@
 import joblib
 import __main__
+
+import uvicorn
 from fastapi import FastAPI, Request, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from typing import List
 
 from model import Model
+from reviews_class_model import ReviewsClassModel
+from reviews_topic_model import ReviewsTopicModel
+from steam_controller import SteamController
 
 setattr(__main__, "Model", Model)
+setattr(__main__, "ReviewsClassModel", ReviewsClassModel)
+setattr(__main__, "ReviewsTopicModel", ReviewsTopicModel)
 model = joblib.load("model.joblib")
+reviews_class_model_ = joblib.load("model_reviews_class_model.joblib")
+reviews_topic_model_ = joblib.load("model_reviews_topic_model.joblib")
+steam_controller = SteamController()
 app = FastAPI()
 
 
@@ -44,8 +54,30 @@ async def set_selected_games(request: Request, games_ids: List[int] = Query(None
 
 @app.get("/reviews/{game_id}")
 async def get_reviews(game_id):
-    return {
-        "pros": ["art", "music", "gameplay"],
-        "cons": ["bugs", "controls"],
-        "id": game_id,
-    }
+    reviews_limit = 5
+    reviews_min = 5
+
+    data = steam_controller.get_game_reviews(game_id)
+    data = data.rename(columns={"review": "text"})
+    data = reviews_class_model_.predict(data, "class")
+    data = data.loc[data["class"] != "0.0"]
+    data = reviews_topic_model_.predict(data, "topic")
+    results = (
+        data.groupby(["class", "topic"])["embedding"]
+        .count()
+        .reset_index()
+        .rename(columns={"embedding": "count"})
+    )
+    results = (
+        results[results["count"] > reviews_min]
+        .sort_values(["count"], ascending=False)
+        .groupby(["class"])["topic"]
+        .apply(list)
+        .to_dict()
+    )
+    results["pros"], results["cons"], results["id"] = (
+        results.pop("1.0")[:reviews_limit],
+        results.pop("-1.0")[:reviews_limit],
+        game_id,
+    )
+    return results
