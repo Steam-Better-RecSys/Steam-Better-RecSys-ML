@@ -21,7 +21,7 @@ class TextPreprocessor:
             word
             for word in text
             if word not in self.stop_words
-            or self.special_stop_words
+            and word not in self.special_stop_words
             and word in self.words
         ]
         text = " ".join(text)
