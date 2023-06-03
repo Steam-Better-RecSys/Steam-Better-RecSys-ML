@@ -66,12 +66,14 @@ async def get_reviews(game_id):
     data = data.loc[data["class"] != "0.0"]
     data = reviews_topic_model_.predict(data, "topic")
     top_words = {
-        'pos_top_words': '1.0',
-        'neg_top_words': '-1.0',
+        "pos_top_words": "1.0",
+        "neg_top_words": "-1.0",
     }
 
     for top in top_words:
-        words = Counter(sum(data[data['class'] == top_words[top]]['text'].str.split().to_list(), [])).most_common(top_words_limit)
+        words = Counter(
+            sum(data[data["class"] == top_words[top]]["text"].str.split().to_list(), [])
+        ).most_common(top_words_limit)
         top_words[top] = [i[0] for i in words]
 
     results = (

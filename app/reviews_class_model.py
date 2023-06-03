@@ -37,7 +37,7 @@ class ReviewsClassModel(TextClassifier):
 
 if __name__ == "__main__":
     data = pd.read_csv("../Data/labeled_steam_reviews.csv")
-    model = ReviewsClassModel('keras_models/reviews_class_model')
+    model = ReviewsClassModel("keras_models/reviews_class_model")
     model.create_model(data)
     joblib.dump(model, "model_reviews_class_model.joblib", compress=3)
 

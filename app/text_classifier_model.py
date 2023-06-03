@@ -54,7 +54,7 @@ class TextClassifier:
         return train_test_split(X, y, train_size=train_size)
 
     def load_model(self):
-        self.model = keras.models.load_model(os.getcwd() + '/' + self.model_path)
+        self.model = keras.models.load_model(os.getcwd() + "/" + self.model_path)
 
     def predict(self, df: pd.DataFrame, prediction_column: str):
         df["text"] = df["text"].apply(self.text_preprocessor.preprocess)

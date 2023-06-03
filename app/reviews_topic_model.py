@@ -27,7 +27,7 @@ class ReviewsTopicModel(TextClassifier):
             X_train,
             y_train,
             batch_size=8,
-            epochs=20,
+            epochs=50,
             validation_data=(X_test, y_test),
             verbose=1,
         )
@@ -37,7 +37,7 @@ class ReviewsTopicModel(TextClassifier):
 
 if __name__ == "__main__":
     data = pd.read_csv("../Data/labeled_steam_reviews.csv")
-    model = ReviewsTopicModel('keras_models/reviews_topic_model')
+    model = ReviewsTopicModel("keras_models/reviews_topic_model")
     model.create_model(data)
     joblib.dump(model, "model_reviews_topic_model.joblib", compress=3)
 
