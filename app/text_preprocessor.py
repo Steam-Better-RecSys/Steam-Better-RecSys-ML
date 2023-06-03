@@ -10,6 +10,7 @@ class TextPreprocessor:
         self.lemmatizer = WordNetLemmatizer()
         self.words = set(nltk.corpus.words.words())
         self.stop_words = set(stopwords.words("english"))
+        self.special_stop_words = {'play', 'game'}
 
     def preprocess(self, text):
         text = re.sub("[\(\[].*?[\)\]]", "", str(text))
@@ -18,8 +19,9 @@ class TextPreprocessor:
         text = [
             self.lemmatizer.lemmatize(word)
             for word in word_tokenize(text)
-            if self.lemmatizer.lemmatize(word) not in self.stop_words
-            and word in self.words
+        ]
+        text = [
+            word for word in text if word not in self.stop_words or self.special_stop_words and word in self.words
         ]
         text = " ".join(text)
 

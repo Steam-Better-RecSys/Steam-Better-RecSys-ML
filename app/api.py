@@ -1,11 +1,11 @@
 import joblib
 import __main__
 
-import uvicorn
 from fastapi import FastAPI, Request, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from typing import List
+from collections import Counter
 
 from model import Model
 from reviews_class_model import ReviewsClassModel
@@ -17,7 +17,9 @@ setattr(__main__, "ReviewsClassModel", ReviewsClassModel)
 setattr(__main__, "ReviewsTopicModel", ReviewsTopicModel)
 model = joblib.load("model.joblib")
 reviews_class_model_ = joblib.load("model_reviews_class_model.joblib")
+reviews_class_model_.load_model()
 reviews_topic_model_ = joblib.load("model_reviews_topic_model.joblib")
+reviews_topic_model_.load_model()
 steam_controller = SteamController()
 app = FastAPI()
 
@@ -56,12 +58,22 @@ async def set_selected_games(request: Request, games_ids: List[int] = Query(None
 async def get_reviews(game_id):
     reviews_limit = 5
     reviews_min = 5
+    top_words_limit = 20
 
     data = steam_controller.get_game_reviews(game_id)
     data = data.rename(columns={"review": "text"})
     data = reviews_class_model_.predict(data, "class")
     data = data.loc[data["class"] != "0.0"]
     data = reviews_topic_model_.predict(data, "topic")
+    top_words = {
+        'pos_top_words': '1.0',
+        'neg_top_words': '-1.0',
+    }
+
+    for top in top_words:
+        words = Counter(sum(data[data['class'] == top_words[top]]['text'].str.split().to_list(), [])).most_common(top_words_limit)
+        top_words[top] = [i[0] for i in words]
+
     results = (
         data.groupby(["class", "topic"])["embedding"]
         .count()
@@ -80,4 +92,5 @@ async def get_reviews(game_id):
         results.pop("-1.0")[:reviews_limit],
         game_id,
     )
+    results.update(top_words)
     return results

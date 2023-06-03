@@ -20,6 +20,7 @@ class TextClassifier:
     word_2_index = {}
     index_2_class = []
     model_path = ""
+    model = None
     text_preprocessor = TextPreprocessor()
     padding_maxlen = 100
 
@@ -52,8 +53,10 @@ class TextClassifier:
 
         return train_test_split(X, y, train_size=train_size)
 
+    def load_model(self):
+        self.model = keras.models.load_model(os.getcwd() + '/' + self.model_path)
+
     def predict(self, df: pd.DataFrame, prediction_column: str):
-        model = keras.models.load_model(os.getcwd() + '/' + self.model_path)
         df["text"] = df["text"].apply(self.text_preprocessor.preprocess)
         df["embedding"] = [
             [self.word_2_index[word] if word in self.word_2_index else 0 for word in i]
@@ -61,7 +64,7 @@ class TextClassifier:
         ]
         df = df[df["embedding"].notna()]
         embeddings = pad_sequences(df["embedding"], maxlen=self.padding_maxlen)
-        predictions = model.predict(embeddings)
+        predictions = self.model.predict(embeddings)
         df["predictions"] = [p for p in predictions]
         df[prediction_column] = [
             self.index_2_class[np.argmax(prediction)] for prediction in predictions
