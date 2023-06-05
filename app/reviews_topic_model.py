@@ -17,7 +17,7 @@ class ReviewsTopicModel(TextClassifier):
         model.add(Embedding(len(self.word_2_index), 100))
         model.add(SpatialDropout1D(0.8))
         model.add(LSTM(64, dropout=0.8, recurrent_dropout=0.8))
-        model.add(Dense(19, activation="softmax"))
+        model.add(Dense(21, activation="softmax"))
 
         model.compile(
             loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"]
