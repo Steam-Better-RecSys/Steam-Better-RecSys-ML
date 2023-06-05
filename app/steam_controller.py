@@ -2,21 +2,20 @@ import json
 import time
 from urllib.request import urlopen
 import pandas as pd
-from nltk import sent_tokenize
 
 
 class SteamController:
     day_range = 9223372036854775807
     language = "english"
 
-    def get_game_reviews(self, id):
+    def get_game_reviews(self, game_id):
         reviews_df = pd.DataFrame()
         cursor = "*"
         max_batches = 5
         current_batch = 0
 
         while True and current_batch < max_batches:
-            url = f"https://store.steampowered.com/appreviews/{id}?json=1&num_per_page=100&day_range={self.day_range}&language={self.language}&cursor={cursor}"
+            url = f"https://store.steampowered.com/appreviews/{game_id}?json=1&num_per_page=100&day_range={self.day_range}&language={self.language}&cursor={cursor}"
             response = urlopen(url)
             data = json.loads(response.read())
 
@@ -53,7 +52,7 @@ class SteamController:
         reviews_reduced_df = reviews_reduced_df.reset_index()
 
         reviews_reduced_df["review"] = reviews_reduced_df["review"].apply(
-            lambda x: sent_tokenize(x)
+            lambda x: x.replace('\n', '.').split('.')
         )
 
         reviews_reduced_df = reviews_reduced_df.explode("review")
