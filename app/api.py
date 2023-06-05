@@ -57,7 +57,7 @@ async def set_selected_games(request: Request, games_ids: List[int] = Query(None
 @app.get("/reviews/{game_id}")
 async def get_reviews(game_id):
     reviews_limit = 5
-    reviews_min = 5
+    reviews_min = 3
     top_words_limit = 20
 
     data = steam_controller.get_game_reviews(game_id)
@@ -89,10 +89,10 @@ async def get_reviews(game_id):
         .apply(list)
         .to_dict()
     )
-    results["pros"], results["cons"], results["id"] = (
-        results.pop("1.0")[:reviews_limit],
-        results.pop("-1.0")[:reviews_limit],
-        game_id,
-    )
+    if "1.0" in results:
+        results["pros"] = results.pop("1.0")[:reviews_limit]
+    if "-1.0" in results:
+        results["cons"] = results.pop("-1.0")[:reviews_limit]
+
     results.update(top_words)
     return results
