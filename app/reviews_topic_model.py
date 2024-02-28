@@ -2,6 +2,7 @@ import joblib
 import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
+from keras.src.layers import Conv1D, MaxPooling1D
 
 from text_classifier_model import TextClassifier
 
@@ -11,12 +12,13 @@ class ReviewsTopicModel(TextClassifier):
         df = df[df["topic"].notna()]
         df = self.preprocess(df)
 
-        X_train, X_test, y_train, y_test = self.prepare_data(df, "topic", 30, 0.8)
+        X_train, X_test, y_train, y_test = self.prepare_data(df, "topic", 40, 0.8)
 
         model = Sequential()
         model.add(Embedding(len(self.word_2_index), 100))
         model.add(SpatialDropout1D(0.8))
-        model.add(LSTM(64, dropout=0.8, recurrent_dropout=0.8))
+        model.add(LSTM(300, dropout=0.8, recurrent_dropout=0.8, return_sequences=True))
+        model.add(LSTM(100))
         model.add(Dense(21, activation="softmax"))
 
         model.compile(

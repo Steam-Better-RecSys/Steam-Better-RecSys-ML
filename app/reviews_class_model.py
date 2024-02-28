@@ -1,7 +1,7 @@
 import joblib
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D
+from keras.layers import Dense, Embedding, LSTM, SpatialDropout1D, Conv1D, MaxPooling1D
 
 from text_classifier_model import TextClassifier
 
@@ -9,14 +9,16 @@ from text_classifier_model import TextClassifier
 class ReviewsClassModel(TextClassifier):
     def create_model(self, df: pd.DataFrame):
         df = self.preprocess(df)
-        # df = df.drop(df[df["class"] == 0].sample(frac=0.5).index)
 
-        X_train, X_test, y_train, y_test = self.prepare_data(df, "class", 40, 0.7)
+        X_train, X_test, y_train, y_test = self.prepare_data(df, "class", 50, 0.8)
 
         model = Sequential()
-        model.add(Embedding(len(self.word_2_index), 50))
-        model.add(SpatialDropout1D(0.7))
-        model.add(LSTM(64, dropout=0.7, recurrent_dropout=0.7))
+        model.add(Embedding(len(self.word_2_index), 100))
+        model.add(SpatialDropout1D(0.8))
+        model.add(Conv1D(filters=16, kernel_size=3, padding='same',
+                             activation='relu'))
+        model.add(MaxPooling1D(pool_size=2))
+        model.add(LSTM(100, dropout=0.8, recurrent_dropout=0.8))
         model.add(Dense(3, activation="softmax"))
 
         model.compile(
