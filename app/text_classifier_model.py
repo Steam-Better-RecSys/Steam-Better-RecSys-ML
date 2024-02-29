@@ -24,7 +24,7 @@ class TextClassifier:
     text_preprocessor = TextPreprocessor()
     padding_maxlen = 100
 
-    def __init__(self, model_path):
+    def __init__(self, model_path = "test"):
         self.model_path = model_path
 
     def preprocess(self, df: pd.DataFrame):

@@ -5,7 +5,6 @@ from fastapi import FastAPI, Request, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from typing import List
-from collections import Counter
 
 from model import Model
 
